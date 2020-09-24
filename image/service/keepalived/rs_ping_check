@@ -1,0 +1,36 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import sys
+import subprocess
+import argparse
+
+'''
+# If set, the exit code from healthchecker is used
+# to dynamically adjust the weight as follows:
+#   exit status 0: svc check success, weight
+#     unchanged.
+#   exit status 1: svc check failed.
+#   exit status 2-255: svc check success, weight
+#     changed to 2 less than exit status.
+#   (for example: exit status of 255 would set
+#     weight to 253)
+# NOTE: do not have more than one dynamic MISC_CHECK per real_server.
+misc_dynamic
+'''      
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(prog='rs ping check')
+    parser.add_argument('-w', '--weight', dest='weight', default='4')
+    parser.add_argument('real_server', help="RS ip address")
+    myargs = parser.parse_args()
+    weight = int(myargs.weight)
+    if not myargs.real_server:
+        sys.exit(2)
+
+    p = subprocess.Popen(['ping', myargs.real_server, '-c', '3', '-i', '0.2'])
+    p.wait()
+    if p.returncode == 0:
+        print("{}".format(weight))
+        sys.exit(weight)
+    else:
+        sys.exit(2)

@@ -51,3 +51,4 @@ RUN /container/tool/install-service
 
 # Add default env variables
 ADD environment /container/environment/99-default
+ENV PATH $PATH:/container/service/keepalived
